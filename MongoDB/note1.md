@@ -1,3 +1,50 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [MongoDB再入门](#mongodb%E5%86%8D%E5%85%A5%E9%97%A8)
+  - [关于MongoDB](#%E5%85%B3%E4%BA%8Emongodb)
+  - [MongoDB版本变迁](#mongodb%E7%89%88%E6%9C%AC%E5%8F%98%E8%BF%81)
+  - [MongoDB vs 关系型数据库](#mongodb-vs-%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93)
+  - [MongoDB 特色及优势](#mongodb-%E7%89%B9%E8%89%B2%E5%8F%8A%E4%BC%98%E5%8A%BF)
+  - [MongoDB 技术优势总结](#mongodb-%E6%8A%80%E6%9C%AF%E4%BC%98%E5%8A%BF%E6%80%BB%E7%BB%93)
+  - [MongoDB基本操作](#mongodb%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C)
+    - [使用insert完成插入操作](#%E4%BD%BF%E7%94%A8insert%E5%AE%8C%E6%88%90%E6%8F%92%E5%85%A5%E6%93%8D%E4%BD%9C)
+    - [使用find查询文档](#%E4%BD%BF%E7%94%A8find%E6%9F%A5%E8%AF%A2%E6%96%87%E6%A1%A3)
+    - [使用find搜索子文档](#%E4%BD%BF%E7%94%A8find%E6%90%9C%E7%B4%A2%E5%AD%90%E6%96%87%E6%A1%A3)
+    - [使用find搜索数组](#%E4%BD%BF%E7%94%A8find%E6%90%9C%E7%B4%A2%E6%95%B0%E7%BB%84)
+    - [使用find搜索数组中的对象](#%E4%BD%BF%E7%94%A8find%E6%90%9C%E7%B4%A2%E6%95%B0%E7%BB%84%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1)
+    - [控制find返回的字段](#%E6%8E%A7%E5%88%B6find%E8%BF%94%E5%9B%9E%E7%9A%84%E5%AD%97%E6%AE%B5)
+    - [使用remove删除文档](#%E4%BD%BF%E7%94%A8remove%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3)
+    - [使用update更新文档](#%E4%BD%BF%E7%94%A8update%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3)
+    - [使用drop删除集合](#%E4%BD%BF%E7%94%A8drop%E5%88%A0%E9%99%A4%E9%9B%86%E5%90%88)
+    - [使用dropDatabase删除数据库](#%E4%BD%BF%E7%94%A8dropdatabase%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%BA%93)
+  - [聚合查询](#%E8%81%9A%E5%90%88%E6%9F%A5%E8%AF%A2)
+    - [什么是MongoDB聚合框架](#%E4%BB%80%E4%B9%88%E6%98%AFmongodb%E8%81%9A%E5%90%88%E6%A1%86%E6%9E%B6)
+    - [管道(Pipeline)和步骤(Stage)](#%E7%AE%A1%E9%81%93pipeline%E5%92%8C%E6%AD%A5%E9%AA%A4stage)
+    - [聚合运算的基本格式](#%E8%81%9A%E5%90%88%E8%BF%90%E7%AE%97%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F)
+    - [聚合运算的使用场景](#%E8%81%9A%E5%90%88%E8%BF%90%E7%AE%97%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
+  - [聚合实战](#%E8%81%9A%E5%90%88%E5%AE%9E%E6%88%98)
+    - [聚合实验一](#%E8%81%9A%E5%90%88%E5%AE%9E%E9%AA%8C%E4%B8%80)
+    - [聚合实验二](#%E8%81%9A%E5%90%88%E5%AE%9E%E9%AA%8C%E4%BA%8C)
+  - [MongoDB 复制集](#mongodb-%E5%A4%8D%E5%88%B6%E9%9B%86)
+    - [复制集的作用](#%E5%A4%8D%E5%88%B6%E9%9B%86%E7%9A%84%E4%BD%9C%E7%94%A8)
+    - [典型复制集结构](#%E5%85%B8%E5%9E%8B%E5%A4%8D%E5%88%B6%E9%9B%86%E7%BB%93%E6%9E%84)
+    - [数据是如何复制的？](#%E6%95%B0%E6%8D%AE%E6%98%AF%E5%A6%82%E4%BD%95%E5%A4%8D%E5%88%B6%E7%9A%84)
+    - [通过选举完成故障恢复](#%E9%80%9A%E8%BF%87%E9%80%89%E4%B8%BE%E5%AE%8C%E6%88%90%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D)
+    - [影响选举的因素](#%E5%BD%B1%E5%93%8D%E9%80%89%E4%B8%BE%E7%9A%84%E5%9B%A0%E7%B4%A0)
+    - [常见选项](#%E5%B8%B8%E8%A7%81%E9%80%89%E9%A1%B9)
+    - [复制集注意事项](#%E5%A4%8D%E5%88%B6%E9%9B%86%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+  - [搭建MongoDB复制集](#%E6%90%AD%E5%BB%BAmongodb%E5%A4%8D%E5%88%B6%E9%9B%86)
+  - [MongoDB 全家桶](#mongodb-%E5%85%A8%E5%AE%B6%E6%A1%B6)
+    - [Mongodump/mongorestore](#mongodumpmongorestore)
+    - [Atlas-MongoDB公有云托管服务](#atlas-mongodb%E5%85%AC%E6%9C%89%E4%BA%91%E6%89%98%E7%AE%A1%E6%9C%8D%E5%8A%A1)
+    - [MongoDB BI Connector](#mongodb-bi-connector)
+    - [MongoDB Ops Manager-集群管理平台](#mongodb-ops-manager-%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0)
+    - [MongoDB Charts](#mongodb-charts)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # MongoDB再入门
 
 ## 关于MongoDB
