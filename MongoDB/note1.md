@@ -68,7 +68,6 @@ MongoDB有两个发布版本：社区版和企业版。社区版基于SSPL，一
 ## MongoDB vs 关系型数据库
 ![image](https://user-images.githubusercontent.com/34932312/73416580-30006b80-4350-11ea-8a93-723e1afaef00.png)
 
-
 ## MongoDB 特色及优势
 - 灵活性
     - 多形性：同一个集合中可以包含不同字段（类型）的文档对象，可动态增加新字段
