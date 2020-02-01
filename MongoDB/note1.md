@@ -561,18 +561,3 @@ mongorestore -h 127.0.0.1:27017 -d test -c test xxx.bson
 
 ### MongoDB Charts
 ![image](https://user-images.githubusercontent.com/34932312/73588794-2588d200-4508-11ea-9aae-e0ff545b28fa.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
