@@ -273,3 +273,8 @@ MongoDB的写入关注等级表
 
 如何解决呢？只需要设置一下writeconcern！
 ![image](https://user-images.githubusercontent.com/34932312/73602519-3ee55900-45b0-11ea-8f59-46a17c504858.png)
+
+
+
+
+
