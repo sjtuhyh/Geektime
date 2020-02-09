@@ -655,10 +655,80 @@ var coll = session.getDatabase('test').getCollection("tx");
 - 多文档事务中的读操作必须使用主节点读;
 - readConcern只应该在事务级别设置，不能设置在每次读写操作上。
 
+## Change Stream
+### 什么是Change Stream？
+Change Stream是MongoDB用于实现变更追踪的解决方案，类似于关系数据库的触发器，但原理不完全相同：
+![image](https://user-images.githubusercontent.com/34932312/74094682-1ca78a00-4b20-11ea-8720-70beb0361eb3.png)
 
+触发方式在关系型数据库中是一种同步触发的机制，即处理逻辑和原先的数据库操作在一个事务里完成的，比如根据某一条插入往另外一个表中进行一条插入。MongoDB的Change Stream是异步操作，在原先的数据库操作完成之后才会调用下一个事件。
 
+### Change Stream的实现原理
+Change Stream 是基于 oplog 实现的。它在 oplog 上开启一个 tailable cursor 来追踪所有复制集上的变更操作，最终调用应用中定义的回调函数。 被追踪的变更事件主要包括: 
+- insert/update/delete:插入、更新、删除; 
+- drop:集合被删除; 
+- rename:集合被重命名; 
+- dropDatabase:数据库被删除; 
+- invalidate:drop/rename/dropDatabase将导致invalidate被触发， 并关闭 change stream; 
 
+### Change Stream与可重复读
+Change Stream 只推送已经在大多数节点上提交的变更操作。即“可重复读”的变更。这个验证是通过 {readConcern: “majority”} 实现的。因此:
+- 未开启majorityreadConcern的集群无法使用ChangeStream;
+- 当集群无法满足{w:“majority”}时，不会触发ChangeStream(例如PSA架构 中的 S 因故障宕机)。
 
+### Change Stream 变更过滤
+如果只对某些类型的变更事件感兴趣，可以使用使用聚合管道的过滤步骤过滤事件。比如只对插入和删除感兴趣，对更新不感兴趣，更新的只是个计数counter，对我来讲没有实质上的意义。
+```
+var cs = db.collection.watch([{
+    $match: {  // match就是一个过滤器，只满足这个条件的事件才推送
+        operationType: {
+            $in: ['insert', 'delete']  // 只对insert、delete这两种操作进行一些处理
+        }
+    }    
+}])    
+```
+
+### Change Stream示例
+```
+> db.collection.watch([],  // 第一个参数是一个过滤器，可以选择是否需要过滤还是所有事件
+{maxAwaitTimeMS: 30000}).pretty()  //maxAwaitTimeMS: 多长时间没有事件可以退出
+```
+
+```
+> db.collection.insert({
+    _id: 1,
+    text: "hello"
+  })
+```
+
+结果：
+```
+{
+    _id : (resumeToken), 
+    operationType : "insert", ...
+    fullDocument : {
+        _id : 1,
+        text: "hello" 
+    }
+}
+```
+
+### Change Stream 故障恢复
+假设在一系列写入操作的过程中，订阅 Change Stream 的应用在接收到“写3”之后于 t0 时刻崩溃，重启后后续的变更怎么办?
+![image](https://user-images.githubusercontent.com/34932312/74095447-ecfe7f00-4b2b-11ea-92b3-1d41cd456d01.png)
+
+![image](https://user-images.githubusercontent.com/34932312/74095458-3058ed80-4b2c-11ea-8944-fe94bbae0de1.png)
+
+### Change Stream 使用场景
+- 跨集群的变更复制——在源集群中订阅ChangeStream，一旦得到任何变更立即写入目标集群。
+- 微服务联动——当一个微服务变更数据库时，其他微服务得到通知并做出相应的变更。
+- 其他任何需要系统联动的场景。
+
+### 注意事项
+- ChangeStream依赖于oplog，因此中断时间不可超过oplog回收的最大时间窗; 
+- 在执行update操作时，如果只更新了部分数据，那么ChangeStream通知的也是增量部分;
+- 同理，删除数据时通知的仅是删除数据的_id。
+
+## MongoDB开发最佳实践
 
 
 
