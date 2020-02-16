@@ -1,3 +1,80 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [从熟练到精通的开发之路](#%E4%BB%8E%E7%86%9F%E7%BB%83%E5%88%B0%E7%B2%BE%E9%80%9A%E7%9A%84%E5%BC%80%E5%8F%91%E4%B9%8B%E8%B7%AF)
+  - [模型设计基础](#%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E5%9F%BA%E7%A1%80)
+    - [数据模型](#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B)
+    - [数据模型设计的元素](#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E7%9A%84%E5%85%83%E7%B4%A0)
+    - [传统模型设计：从概念到逻辑到物理](#%E4%BC%A0%E7%BB%9F%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E4%BB%8E%E6%A6%82%E5%BF%B5%E5%88%B0%E9%80%BB%E8%BE%91%E5%88%B0%E7%89%A9%E7%90%86)
+    - [模型设计小结](#%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E5%B0%8F%E7%BB%93)
+  - [JSON文档模型设计特点](#json%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E7%89%B9%E7%82%B9)
+    - [MongoDB 文档模型设计的三个误区](#mongodb-%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%B8%89%E4%B8%AA%E8%AF%AF%E5%8C%BA)
+  - [文档模型设计之一：基础设计](#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%80%E5%9F%BA%E7%A1%80%E8%AE%BE%E8%AE%A1)
+  - [文档模型设计之二：工况细化](#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%BA%8C%E5%B7%A5%E5%86%B5%E7%BB%86%E5%8C%96)
+    - [什么时候该使用引用方式？](#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%AF%A5%E4%BD%BF%E7%94%A8%E5%BC%95%E7%94%A8%E6%96%B9%E5%BC%8F)
+  - [文档模型设计之三：模式套用](#%E6%96%87%E6%A1%A3%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1%E4%B9%8B%E4%B8%89%E6%A8%A1%E5%BC%8F%E5%A5%97%E7%94%A8)
+    - [问题：物联网场景下的海量数据处理-飞机监控数据](#%E9%97%AE%E9%A2%98%E7%89%A9%E8%81%94%E7%BD%91%E5%9C%BA%E6%99%AF%E4%B8%8B%E7%9A%84%E6%B5%B7%E9%87%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86-%E9%A3%9E%E6%9C%BA%E7%9B%91%E6%8E%A7%E6%95%B0%E6%8D%AE)
+    - [模式小结：分桶](#%E6%A8%A1%E5%BC%8F%E5%B0%8F%E7%BB%93%E5%88%86%E6%A1%B6)
+  - [设计模式集锦](#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E9%9B%86%E9%94%A6)
+    - [大文档，很多字段，很多索引](#%E5%A4%A7%E6%96%87%E6%A1%A3%E5%BE%88%E5%A4%9A%E5%AD%97%E6%AE%B5%E5%BE%88%E5%A4%9A%E7%B4%A2%E5%BC%95)
+    - [模型灵活了，如何管理文档不同版本?](#%E6%A8%A1%E5%9E%8B%E7%81%B5%E6%B4%BB%E4%BA%86%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86%E6%96%87%E6%A1%A3%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC)
+    - [统计网页点击流量](#%E7%BB%9F%E8%AE%A1%E7%BD%91%E9%A1%B5%E7%82%B9%E5%87%BB%E6%B5%81%E9%87%8F)
+    - [业绩排名，游戏排名，商品统计等精确统计](#%E4%B8%9A%E7%BB%A9%E6%8E%92%E5%90%8D%E6%B8%B8%E6%88%8F%E6%8E%92%E5%90%8D%E5%95%86%E5%93%81%E7%BB%9F%E8%AE%A1%E7%AD%89%E7%B2%BE%E7%A1%AE%E7%BB%9F%E8%AE%A1)
+  - [事务开发：写操作事务](#%E4%BA%8B%E5%8A%A1%E5%BC%80%E5%8F%91%E5%86%99%E6%93%8D%E4%BD%9C%E4%BA%8B%E5%8A%A1)
+    - [什么是writeConcern？](#%E4%BB%80%E4%B9%88%E6%98%AFwriteconcern)
+    - [默认行为](#%E9%BB%98%E8%AE%A4%E8%A1%8C%E4%B8%BA)
+    - [j:true](#jtrue)
+    - [writeConcern的意义](#writeconcern%E7%9A%84%E6%84%8F%E4%B9%89)
+    - [writeConcern实验](#writeconcern%E5%AE%9E%E9%AA%8C)
+    - [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+  - [事务开发：读操作事务](#%E4%BA%8B%E5%8A%A1%E5%BC%80%E5%8F%91%E8%AF%BB%E6%93%8D%E4%BD%9C%E4%BA%8B%E5%8A%A1)
+    - [综述](#%E7%BB%BC%E8%BF%B0)
+    - [readPreference](#readpreference)
+    - [readPreference 场景举例](#readpreference-%E5%9C%BA%E6%99%AF%E4%B8%BE%E4%BE%8B)
+    - [readPreference 与 Tag](#readpreference-%E4%B8%8E-tag)
+    - [readPreference 配置](#readpreference-%E9%85%8D%E7%BD%AE)
+    - [readPreference实验: 从节点读](#readpreference%E5%AE%9E%E9%AA%8C-%E4%BB%8E%E8%8A%82%E7%82%B9%E8%AF%BB)
+    - [readPreference注意事项](#readpreference%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+  - [readConcern](#readconcern)
+    - [什么是readConcern？](#%E4%BB%80%E4%B9%88%E6%98%AFreadconcern)
+    - [readConcern：local和available](#readconcernlocal%E5%92%8Cavailable)
+    - [readConcern：majority](#readconcernmajority)
+    - [readConcern：majority实现方式](#readconcernmajority%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
+    - [实验：readConcern："majority" vs "local"](#%E5%AE%9E%E9%AA%8Creadconcernmajority-vs-local)
+    - [readConcern：majority与脏读](#readconcernmajority%E4%B8%8E%E8%84%8F%E8%AF%BB)
+    - [readConcern：如何实现安全的读写分离](#readconcern%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%AE%89%E5%85%A8%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB)
+    - [小测试](#%E5%B0%8F%E6%B5%8B%E8%AF%95)
+    - [readConcern：linearizable](#readconcernlinearizable)
+    - [readConcern：snapshot](#readconcernsnapshot)
+  - [事务开发：多文档事务](#%E4%BA%8B%E5%8A%A1%E5%BC%80%E5%8F%91%E5%A4%9A%E6%96%87%E6%A1%A3%E4%BA%8B%E5%8A%A1)
+    - [MongoDB ACID 多文档事务支持](#mongodb-acid-%E5%A4%9A%E6%96%87%E6%A1%A3%E4%BA%8B%E5%8A%A1%E6%94%AF%E6%8C%81)
+    - [使用方法](#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95)
+    - [事务的隔离级别](#%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB)
+    - [事务写机制](#%E4%BA%8B%E5%8A%A1%E5%86%99%E6%9C%BA%E5%88%B6)
+    - [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-1)
+  - [Change Stream](#change-stream)
+    - [什么是Change Stream？](#%E4%BB%80%E4%B9%88%E6%98%AFchange-stream)
+    - [Change Stream的实现原理](#change-stream%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+    - [Change Stream与可重复读](#change-stream%E4%B8%8E%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB)
+    - [Change Stream 变更过滤](#change-stream-%E5%8F%98%E6%9B%B4%E8%BF%87%E6%BB%A4)
+    - [Change Stream示例](#change-stream%E7%A4%BA%E4%BE%8B)
+    - [Change Stream 故障恢复](#change-stream-%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D)
+    - [Change Stream 使用场景](#change-stream-%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF)
+    - [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-2)
+  - [MongoDB开发最佳实践](#mongodb%E5%BC%80%E5%8F%91%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5)
+    - [关于连接到MongoDB](#%E5%85%B3%E4%BA%8E%E8%BF%9E%E6%8E%A5%E5%88%B0mongodb)
+    - [不要在mongos前面使用负载均衡](#%E4%B8%8D%E8%A6%81%E5%9C%A8mongos%E5%89%8D%E9%9D%A2%E4%BD%BF%E7%94%A8%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1)
+    - [游标使用](#%E6%B8%B8%E6%A0%87%E4%BD%BF%E7%94%A8)
+    - [关于查询及索引](#%E5%85%B3%E4%BA%8E%E6%9F%A5%E8%AF%A2%E5%8F%8A%E7%B4%A2%E5%BC%95)
+    - [关于写入](#%E5%85%B3%E4%BA%8E%E5%86%99%E5%85%A5)
+    - [关于文档结构](#%E5%85%B3%E4%BA%8E%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84)
+    - [处理分页问题-避免使用count](#%E5%A4%84%E7%90%86%E5%88%86%E9%A1%B5%E9%97%AE%E9%A2%98-%E9%81%BF%E5%85%8D%E4%BD%BF%E7%94%A8count)
+    - [处理分页问题-巧分页](#%E5%A4%84%E7%90%86%E5%88%86%E9%A1%B5%E9%97%AE%E9%A2%98-%E5%B7%A7%E5%88%86%E9%A1%B5)
+    - [关于事务](#%E5%85%B3%E4%BA%8E%E4%BA%8B%E5%8A%A1)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # 从熟练到精通的开发之路
 
 ## 模型设计基础
@@ -810,18 +887,3 @@ db.coll.count({x: 100});
 - 模型设计先于事务，尽可能用模型设计规避事务;
 - 不要使用过大的事务(尽量控制在1000个文档更新以内);
 - 当必须使用事务时，尽可能让涉及事务的文档分布在同一个分片上，这将有效地提高效率;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
