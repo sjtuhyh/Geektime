@@ -59,7 +59,6 @@ int main()
 在 Windows 下，可执行程序的后缀有.exe和.com（其中.exe比较常见）；在类 UNIX 系统（Linux、Mac OS 等）下，可执行程序没有特定的后缀，系统根据文件的头部信息来判断是否是可执行程序。例如，在屏幕上输出“VIP会员”，C语言的写法为：
 ```
 puts("VIP会员");
-
 ```
 二进制的写法为：
 ![image](https://user-images.githubusercontent.com/34932312/78223650-d526f400-74f9-11ea-9f4a-99a7fff5a260.png)
